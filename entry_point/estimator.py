@@ -205,7 +205,7 @@ def train(task_name, classes, target_epochs, learning_rate):
     #utils.export_block('%s/model' % os.environ['SM_MODEL_DIR'], model, preprocess=True)
     model.set_nms(nms_thresh=0.45, nms_topk=400, post_nms=100)
     model(mx.nd.ones((1,3,512,512), ctx=ctx[0]))
-    #model.export('%s/model' % os.environ['SM_MODEL_DIR'])
+    model.export('%s/model' % os.environ['SM_MODEL_DIR'], epoch=1)
     model.save_parameters('%s/%s-model.params' % (os.environ['SM_MODEL_DIR'], task_name) )
     return model
 
@@ -219,7 +219,7 @@ def model_fn(model_dir):
     net = gluon.SymbolBlock.imports(
         '%s/model-symbol.json' % model_dir,
         ['data'],
-        '%s/model-0000.params' % model_dir,
+        '%s/model-0001.params' % model_dir,
     )
    
     return net
