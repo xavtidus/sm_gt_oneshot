@@ -34,8 +34,9 @@ class GroundTruthDetectionDataset(gluon.data.Dataset):
             lines = f.readlines()
             for line in lines:
                 info = json.loads(line[:-1])
-                if len(info[self.task]['annotations']):
-                    self.image_info.append(info)
+                if self.task in info:
+                    if len(info[self.task]['annotations']):
+                        self.image_info.append(info)
                     
         assert split in ['train', 'test', 'val']
         random.seed(1234)
@@ -206,7 +207,7 @@ def train(task_name, classes, target_epochs, learning_rate):
     model.set_nms(nms_thresh=0.45, nms_topk=400, post_nms=100)
     model(mx.nd.ones((1,3,512,512), ctx=ctx[0]))
     model.export('%s/model' % os.environ['SM_MODEL_DIR'], epoch=1)
-    model.save_parameters('%s/%s-model.params' % (os.environ['SM_MODEL_DIR'], task_name) )
+    model.save_parameters('%s/%s-edge-model.params' % (os.environ['SM_MODEL_DIR'], task_name) )
     return model
 
 def model_fn(model_dir):
