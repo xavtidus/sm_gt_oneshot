@@ -208,6 +208,8 @@ def train(task_name, classes, target_epochs, learning_rate):
     model(mx.nd.ones((1,3,512,512), ctx=ctx[0]))
     model.export('%s/model' % os.environ['SM_MODEL_DIR'], epoch=1)
     model.save_parameters('%s/%s-edge-model.params' % (os.environ['SM_MODEL_DIR'], task_name) )
+    with open('%s/%s-edge-model-classes.json' % (os.environ['SM_MODEL_DIR'], task_name), 'w') as outfile:
+        outfile.write(json.dumps({"mclasses":classes}))
     return model
 
 def model_fn(model_dir):
